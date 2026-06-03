@@ -7,17 +7,6 @@ local folders = {
     workspace.World.NPC.BossTask
 }
 
-local function getLabel(npc)
-    local talk = npc:FindFirstChild("Talk")
-    if talk then
-        local prompt = talk:FindFirstChildOfClass("ProximityPrompt")
-        if prompt and prompt.ObjectText ~= "" then
-            return prompt.ObjectText
-        end
-    end
-    return npc.Name
-end
-
 local npcMap = {}
 
 local function getNPCs()
@@ -26,12 +15,23 @@ local function getNPCs()
     for _, folder in ipairs(folders) do
         for _, npc in ipairs(folder:GetChildren()) do
             if npc:IsA("Model") then
-                local label = getLabel(npc)
-                npcMap[label] = npc
-                table.insert(list, label)
+                local talk = npc:FindFirstChild("Talk")
+                if talk then
+                    local prompt = talk:FindFirstChildOfClass("ProximityPrompt")
+                    if prompt and prompt.ObjectText ~= "" then
+                        local label = prompt.ObjectText
+                        npcMap[label] = npc
+                        table.insert(list, label)
+                    end
+                end
             end
         end
     end
+    table.sort(list, function(a, b)
+        local numA = tonumber(a:match("%d+")) or 0
+        local numB = tonumber(b:match("%d+")) or 0
+        return numA < numB
+    end)
     return list
 end
 
