@@ -6,14 +6,14 @@ local running = false
 local taskPanel = player.PlayerGui:WaitForChild("Main"):WaitForChild("HomePage"):WaitForChild("TaskPanel")
 
 local function getActiveQuest()
-    local task = taskPanel.Content.Task
-    for _, quest in ipairs(task:GetChildren()) do
+    local taskFrame = taskPanel.Content.Task
+    for _, quest in ipairs(taskFrame:GetChildren()) do
         if quest:IsA("Frame") then
             local outline = quest:FindFirstChild("Outline")
             if outline then
                 local desc = outline.Task.Description
                 local defeated = outline.Defeated
-                local enemy = desc.Text:match("Defeat %d+ (.+)")
+                local enemy = desc.Text:match("Defeat %d+ (.+)"):gsub("s$", "")
                 local current, required = defeated.Text:match("Progress (%d+)/(%d+)")
                 if enemy and current and required then
                     return {
